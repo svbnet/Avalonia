@@ -559,6 +559,66 @@ namespace Avalonia.Controls.UnitTests
             }
         }
 
+        [Fact]
+        public void Can_Submit_With_Enter_No_Selection()
+        {
+            RunTest((control, textBox) =>
+            {
+                var didSubmit = false;
+
+                control.Submitted += (sender, args) => didSubmit = true;
+                control.IsDropDownOpen = true;
+
+
+                textBox.Text = "acc";
+                textBox.RaiseEvent(new KeyEventArgs
+                {
+                    RoutedEvent = InputElement.KeyDownEvent,
+                    Key = Key.Enter
+                });
+                Dispatcher.UIThread.RunJobs();
+
+                Assert.True(didSubmit);
+                Assert.Equal("acc", control.Text);
+            });
+        }
+
+        [Fact]
+        public void Can_Submit_With_Enter_With_Selection()
+        {
+            RunTest((control, textBox) =>
+            {
+                var didSubmit = false;
+
+                control.Submitted += (sender, args) => didSubmit = true;
+                control.IsDropDownOpen = true;
+
+                control.Text = "acc";
+                // First down arrow escapes the text box
+                textBox.RaiseEvent(new KeyEventArgs
+                {
+                    RoutedEvent = InputElement.KeyDownEvent,
+                    Key = Key.Down
+                });
+                // Second down arrow selects the correct item
+                textBox.RaiseEvent(new KeyEventArgs
+                {
+                    RoutedEvent = InputElement.KeyDownEvent,
+                    Key = Key.Down
+                });
+                Dispatcher.UIThread.RunJobs();
+                textBox.RaiseEvent(new KeyEventArgs
+                {
+                    RoutedEvent = InputElement.KeyDownEvent,
+                    Key = Key.Enter
+                });
+                Dispatcher.UIThread.RunJobs();
+
+                Assert.True(didSubmit);
+                Assert.Equal("accept", control.SelectedItem);
+            });
+        }
+
         /// <summary>
         /// Retrieves a defined predicate filter through a new AutoCompleteBox 
         /// control instance.

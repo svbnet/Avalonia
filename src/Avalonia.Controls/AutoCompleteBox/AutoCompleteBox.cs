@@ -918,6 +918,17 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
+        /// Occurs when the user confirms their input or selection into the
+        /// <see cref="T:Avalonia.Controls.AutoCompleteBox"/>.
+        /// </summary>
+        /// <remarks>
+        /// This event occurs when the user enters text and immediately presses
+        /// the "Enter" keyboard key, selects a suggestion using the keyboard
+        /// arrows and presses "Enter", or clicks or taps on an item.
+        /// </remarks>
+        public event EventHandler? Submitted;
+
+        /// <summary>
         /// Raises the
         /// <see cref="E:Avalonia.Controls.AutoCompleteBox.Populating" />
         /// event.
@@ -1015,6 +1026,15 @@ namespace Avalonia.Controls
         protected virtual void OnTextChanged(TextChangedEventArgs e)
         {
             RaiseEvent(e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="Submitted"/> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data.</param>
+        protected virtual void OnSubmitted(EventArgs e)
+        {
+            Submitted?.Invoke(this, e);
         }
 
         /// <summary>
@@ -1804,6 +1824,7 @@ namespace Avalonia.Controls
             ClearTextBoxSelection();
 
             TextBox!.Focus();
+            OnSubmitted(EventArgs.Empty);
         }
 
         /// <summary>
